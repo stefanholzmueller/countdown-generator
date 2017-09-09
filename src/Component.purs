@@ -2,8 +2,14 @@ module Component where
 
 import Prelude
 
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Now (locale, now, nowDateTime)
+import Control.Monad.Eff.Unsafe (unsafePerformEff)
+import Data.DateTime (DateTime(..), adjust)
+import Data.DateTime.Instant (toDateTime)
+import Data.DateTime.Locale (LocalDateTime, LocalValue(..), Locale(..))
+import Data.Formatter.DateTime (formatDateTime)
 import Data.Maybe (Maybe(..))
-
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -25,11 +31,20 @@ component =
   initialState :: State
   initialState = { on: false }
 
+  offset (Locale _ min) = negate min
+
+  adjusted = adjust (offset (unsafePerformEff locale)) (toDateTime (unsafePerformEff now))
+
+  weekend :: LocalValue DateTime
+  weekend = (unsafePerformEff nowDateTime)
+
+  formatted = map (formatDateTime "YYYY MM DD HH mm ss") adjusted
+
   render :: State -> H.ComponentHTML Query
   render state =
     HH.div_
       [ HH.h1_
-          [ HH.text "Hello world!" ]
+          [ HH.text (show formatted) ]
       , HH.p_
           [ HH.text "Why not toggle this button:" ]
       , HH.button
