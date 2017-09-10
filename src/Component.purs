@@ -8,12 +8,12 @@ import Data.Maybe (Maybe(..))
 import Data.Time.Duration (Milliseconds(..))
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Weekend as W
 
 data Query a = Tick a
 
-type State = { on :: Boolean, currentTime :: String }
+type State = { isWeekend :: Boolean, currentTime :: String }
 
 component :: forall eff. H.Component HH.HTML Query Unit Void (Aff (now :: NOW | eff))
 component =
@@ -26,28 +26,30 @@ component =
   where
 
   initialState :: State
-  initialState = { on: false, currentTime: "" }
+  initialState = { isWeekend: false, currentTime: "" }
 
   render :: State -> H.ComponentHTML Query
   render state =
-    HH.div_
-      [ HH.h1_
-          [ HH.text ("It's " <> state.currentTime) ]
-      , HH.p_
-          [ HH.text "Why not toggle this button:" ]
-      , HH.button
-          [ HE.onClick (HE.input_ Tick) ]
-          [ HH.text
-              if not state.on
-              then "Don't push me"
-              else "I said don't push me!"
-          ]
-      ]
+    if state.isWeekend then
+        HH.div [ HP.class_ $ H.ClassName "rainbow" ]
+            [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
+                [ HH.text ("It's " <> state.currentTime) ]
+            , HH.h1 [ HP.class_ $ H.ClassName "weekend" ]
+                [ HH.text "WEEKEND" ]
+            ]
+    else 
+        HH.div_
+            [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
+                [ HH.text ("It's " <> state.currentTime) ]
+            , HH.h1 [ HP.class_ $ H.ClassName "countdown" ]
+                [ HH.text "countdown" ]
+            ]
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (now :: NOW | eff))
   eval = case _ of
     Tick next -> do
       H.liftAff $ delay (Milliseconds 100.0)
       currentTime <- H.liftEff W.formattedCurrentTime
-      H.modify (\state -> state { currentTime = currentTime })
+      isWeekend <- H.liftEff W.isWeekend
+      H.put { isWeekend, currentTime }
       eval (Tick next)
