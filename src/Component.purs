@@ -6,7 +6,6 @@ import Control.Monad.Aff (Aff, delay)
 import Control.Monad.Eff.Now (NOW)
 import Data.Maybe (Maybe(..))
 import Data.Time.Duration (Milliseconds(..))
-import Halogen (liftAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -48,6 +47,7 @@ component =
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (now :: NOW | eff))
   eval = case _ of
     Tick next -> do
+      H.liftAff $ delay (Milliseconds 100.0)
       currentTime <- H.liftEff W.formattedCurrentTime
       H.modify (\state -> state { currentTime = currentTime })
-      pure next
+      eval (Tick next)

@@ -26,16 +26,5 @@ formattedCurrentTime = map toString currentLocalTime
                            formattedDate = (map (formatDateTime "HH:mm:ss") >>> fromMaybe (Left "ERROR") >>> (either (const "ERROR") id)) maybeTime
                        in workaroundForWeekday <> ", " <> formattedDate
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+isWeekend :: forall eff. Eff (now :: NOW | eff) Boolean
+isWeekend = pure false
