@@ -1,3 +1,14 @@
+.time {
+    text-align: center;
+    font-size: 5vmin;
+}
+
+.weekend {
+    color: white;
+    text-align: center;        
+    font-size: 30vmin;
+}
+
 .rainbow { 
     height: 100%;
     width: 100%;
