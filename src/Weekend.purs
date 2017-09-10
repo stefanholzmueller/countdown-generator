@@ -23,7 +23,7 @@ formattedCurrentTime :: forall eff. Eff (now :: NOW | eff) String
 formattedCurrentTime = map toString currentLocalTime
   where
   toString maybeTime = let workaroundForWeekday = (map (\dateTime -> show $ weekday $ date dateTime) >>> fromMaybe "ERROR") maybeTime
-                           formattedDate = (map (formatDateTime "HH:mm") >>> fromMaybe (Left "ERROR") >>> (either (const "ERROR") id)) maybeTime
+                           formattedDate = (map (formatDateTime "HH:mm:ss") >>> fromMaybe (Left "ERROR") >>> (either (const "ERROR") id)) maybeTime
                        in workaroundForWeekday <> ", " <> formattedDate
 
 
