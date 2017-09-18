@@ -5,15 +5,23 @@ import Prelude
 import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Now (NOW, locale, now)
-import Data.DateTime (DateTime, adjust, date, hour, minute, second, time, weekday)
+import Data.DateTime (DateTime, adjust, date, diff, modifyTime, setHour, setMinute, setSecond, weekday)
 import Data.DateTime.Instant (toDateTime)
 import Data.DateTime.Locale (Locale(..))
 import Data.Either (either)
-import Data.Enum (fromEnum)
+import Data.Enum (fromEnum, toEnum)
 import Data.Formatter.DateTime (formatDateTime)
+import Data.Int (floor, toNumber)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
-import Data.Time.Duration (Minutes)
+import Data.Newtype (unwrap)
+import Data.Time.Duration (Days(..), Hours, Minutes, Seconds, fromDuration, toDuration)
 
+
+weekendStartDayOfWeek :: Int
+weekendStartDayOfWeek = 5
+
+weekendStartHour :: Int
+weekendStartHour = 17
 
 offset :: forall eff. Eff (now :: NOW | eff) Minutes
 offset = map (\(Locale _ min) -> negate min) locale
@@ -33,25 +41,25 @@ formattedCurrentTime = map toString currentLocalTime
 isWeekend :: forall eff. Eff (now :: NOW | eff) Boolean
 isWeekend = map isNothing durationTillWeekend
 
-type Duration = { days :: Int, hours :: Int, minutes :: Int, seconds :: Int }
+type Duration = { days :: Days, hours :: Hours, minutes :: Minutes, seconds :: Seconds }
 
 durationTillWeekend :: forall eff. Eff (now :: NOW | eff) (Maybe Duration)
 durationTillWeekend = map testWeekend currentLocalTime
   where
-  testWeekend dateTime = 
-    let dayOfWeek = fromEnum $ weekday $ date dateTime
-        hourOfDay = fromEnum $ hour    $ time dateTime
-        minutes   = fromEnum $ minute  $ time dateTime
-        seconds   = fromEnum $ second  $ time dateTime
-    in if dayOfWeek > 5 then Nothing else if hourOfDay > 16 then Nothing else Just { days: 5 - dayOfWeek, hours: 0, minutes: 0, seconds: 0 }
-
-
-
-
-
-
-
-
+  testWeekend now = 
+    let dayOfWeek = fromEnum $ weekday $ date now
+        dayDiff   = Days $ toNumber (weekendStartDayOfWeek - dayOfWeek)
+        startDate = fromMaybe bottom $ adjust dayDiff now
+        startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0)) startDate
+        duration :: Days
+        duration  = diff startDatetime now
+    in if startDatetime < now
+       then Nothing
+       else Just { days: duration
+                 , hours: toDuration $ fromDuration duration
+                 , minutes: toDuration $ fromDuration duration
+                 , seconds: toDuration $ fromDuration duration
+                 }
 
 
 
