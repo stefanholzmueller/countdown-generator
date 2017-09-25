@@ -14,5 +14,8 @@
     "purescript-now": "^3.0.0",
     "purescript-formatters": "^2.1.0",
     "purescript-js-timers": "^3.0.0"
+  },
+  "devDependencies": {
+    "purescript-debug": "^3.0.0"
   }
 }

@@ -11,10 +11,11 @@ import Data.DateTime.Locale (Locale(..))
 import Data.Either (either)
 import Data.Enum (fromEnum, toEnum)
 import Data.Formatter.DateTime (formatDateTime)
+import Data.Formatter.Number (Formatter(..), format)
 import Data.Int (floor, toNumber)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
 import Data.Newtype (unwrap)
-import Data.Time.Duration (Days(..), Hours, Minutes, Seconds, fromDuration, toDuration)
+import Data.Time.Duration (Days(..), Hours(..), Milliseconds(..), Minutes(..), Seconds(..), convertDuration)
 
 
 weekendStartDayOfWeek :: Int
@@ -41,9 +42,7 @@ formattedCurrentTime = map toString currentLocalTime
 isWeekend :: forall eff. Eff (now :: NOW | eff) Boolean
 isWeekend = map isNothing durationTillWeekend
 
-type Duration = { days :: Days, hours :: Hours, minutes :: Minutes, seconds :: Seconds }
-
-durationTillWeekend :: forall eff. Eff (now :: NOW | eff) (Maybe Duration)
+durationTillWeekend :: forall eff. Eff (now :: NOW | eff) (Maybe String)
 durationTillWeekend = map testWeekend currentLocalTime
   where
   testWeekend now = 
@@ -51,17 +50,32 @@ durationTillWeekend = map testWeekend currentLocalTime
         dayDiff   = Days $ toNumber (weekendStartDayOfWeek - dayOfWeek)
         startDate = fromMaybe bottom $ adjust dayDiff now
         startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0)) startDate
-        duration :: Days
-        duration  = diff startDatetime now
+        timeFormatter = Formatter { comma: false, before: 2, after: 0, abbreviations: false, sign: false }
+        millisFormatter = Formatter { comma: false, before: 3, after: 0, abbreviations: false, sign: false }
+        diffMillis :: Milliseconds
+        diffMillis = diff startDatetime now
     in if startDatetime < now
        then Nothing
-       else Just { days: duration
-                 , hours: toDuration $ fromDuration duration
-                 , minutes: toDuration $ fromDuration duration
-                 , seconds: toDuration $ fromDuration duration
-                 }
-
-
+       else Just let d :: Days
+                     d  = convertDuration diffMillis
+                     d' = floor $ unwrap d
+                     dd = show d'
+                     h :: Hours
+                     h  = convertDuration $ d - (Days $ toNumber d')
+                     h' = toNumber $ floor $ unwrap h
+                     hh = format timeFormatter h'
+                     m :: Minutes
+                     m  = convertDuration $ h - (Hours h')
+                     m' = toNumber $ floor $ unwrap m
+                     mm = format timeFormatter m'
+                     s :: Seconds
+                     s  = convertDuration $ m - (Minutes m')
+                     s' = toNumber $ floor $ unwrap s
+                     ss = format timeFormatter s'
+                     t :: Milliseconds
+                     t  = diffMillis
+                     tt = show t
+                 in (if d' > 0 then dd <> "d " else "") <> hh <> ":" <> mm <> ":" <> ss <> "." <> tt
 
 
 

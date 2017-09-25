@@ -5,8 +5,14 @@
 
 .weekend {
     color: white;
-    text-align: center;        
+    text-align: center;
     font-size: 30vmin;
+}
+
+.countdown {
+    color: black;
+    text-align: center;
+    font-size: 12vmin;
 }
 
 .rainbow { 
