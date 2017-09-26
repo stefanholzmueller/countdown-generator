@@ -15,7 +15,7 @@ import Data.Formatter.Number (Formatter(..), format)
 import Data.Int (floor, toNumber)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
 import Data.Newtype (unwrap)
-import Data.Time.Duration (Days(..), Hours(..), Milliseconds(..), Minutes(..), Seconds(..), convertDuration)
+import Data.Time.Duration (Days(..), Hours(..), Milliseconds, Minutes(..), Seconds, convertDuration)
 
 
 weekendStartDayOfWeek :: Int
@@ -72,10 +72,8 @@ durationTillWeekend = map testWeekend currentLocalTime
                      s  = convertDuration $ m - (Minutes m')
                      s' = toNumber $ floor $ unwrap s
                      ss = format timeFormatter s'
-                     t :: Milliseconds
-                     t  = diffMillis
-                     tt = show t
-                 in (if d' > 0 then dd <> "d " else "") <> hh <> ":" <> mm <> ":" <> ss <> "." <> tt
+                 in (if d' > 0 then dd <> " days and " else "") <> hh <> ":" <> mm <> ":" <> ss
+
 
 
 
