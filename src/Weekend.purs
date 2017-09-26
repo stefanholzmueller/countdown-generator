@@ -5,7 +5,7 @@ import Prelude
 import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Now (NOW, locale, now)
-import Data.DateTime (DateTime, adjust, date, diff, modifyTime, setHour, setMinute, setSecond, weekday)
+import Data.DateTime (DateTime, adjust, date, diff, modifyTime, setHour, setMinute, setSecond, setMillisecond, weekday)
 import Data.DateTime.Instant (toDateTime)
 import Data.DateTime.Locale (Locale(..))
 import Data.Either (either)
@@ -49,7 +49,7 @@ durationTillWeekend = map testWeekend currentLocalTime
     let dayOfWeek = fromEnum $ weekday $ date now
         dayDiff   = Days $ toNumber (weekendStartDayOfWeek - dayOfWeek)
         startDate = fromMaybe bottom $ adjust dayDiff now
-        startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0)) startDate
+        startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0) >>> (setMillisecond $ fromMaybe bottom $ toEnum 0)) startDate
         timeFormatter = Formatter { comma: false, before: 2, after: 0, abbreviations: false, sign: false }
         millisFormatter = Formatter { comma: false, before: 3, after: 0, abbreviations: false, sign: false }
         diffMillis :: Milliseconds
@@ -73,7 +73,4 @@ durationTillWeekend = map testWeekend currentLocalTime
                      s' = toNumber $ floor $ unwrap s
                      ss = format timeFormatter s'
                  in (if d' > 0 then dd <> " days and " else "") <> hh <> ":" <> mm <> ":" <> ss
-
-
-
 
