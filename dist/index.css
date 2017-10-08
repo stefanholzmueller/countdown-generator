@@ -1,18 +1,38 @@
+.rainbow .time {
+	color: #909090;
+}
+
 .time {
     text-align: center;
     font-size: 5vmin;
+    font-family: "Open Sans Condensed",sans-serif;
+    text-shadow: 0px 0px 5vmin #ffffff;
+    color: black;
 }
 
 .weekend {
     color: white;
     text-align: center;
     font-size: 30vmin;
+    font-family: "Comfortaa",serif;
+    text-shadow: 0px 0px 1vmin #909090;
+    border: dotted rgba(144,144,144,0.75);
+    border-width: 3vmin 0 3vmin 0;
+    padding-top: 4vmin;
 }
 
 .countdown {
     color: black;
     text-align: center;
     font-size: 12vmin;
+}
+
+html{
+    background: white; /* For browsers that do not support gradients */    
+    background: -webkit-radial-gradient(white, #909090); /* Safari 5.1 to 6.0 */
+    background: -o-radial-gradient(white, #909090); /* For Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(white, #909090); /* For Firefox 3.6 to 15 */
+    background: radial-gradient(white, #909090); /* Standard syntax (must be last) */
 }
 
 .rainbow { 
@@ -23,10 +43,10 @@
     top: 0;
     bottom: 0;
     position: absolute;
-    -webkit-animation:rainbow 3s infinite;
-    -ms-animation:rainbow 3s infinite;
-    -o-animation:rainbow 3s infinite;
-    animation:rainbow 3s infinite;
+    -webkit-animation:rainbow 30s infinite;
+    -ms-animation:rainbow 30s infinite;
+    -o-animation:rainbow 30s infinite;
+    animation:rainbow 30s infinite;
 }
 @-webkit-keyframes rainbow {
     0% {background: #ff0000;}
