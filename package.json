@@ -4,6 +4,7 @@
     "build": "pulp build --to dist/app.js",
     "watch": "pulp -w build --to dist/app.js",
     "watch-fast": "webpack --entry ./entry.js --output-filename dist/app.js --progress --watch"
+    "webpack": "webpack --entry ./entry.js --output-filename dist/app.js -p --progress"
   },
   "devDependencies": {
     "pulp": "^11.0.0",
