@@ -1,5 +1,15 @@
-.rainbow .time {
-	color: #909090;
+html{
+	height:100%;
+}
+
+body{
+    height:100%;
+    margin:0;
+    background: white; /* For browsers that do not support gradients */
+    background: -webkit-radial-gradient(white, #909090); /* Safari 5.1 to 6.0 */
+    background: -o-radial-gradient(white, #909090); /* For Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(white, #909090); /* For Firefox 3.6 to 15 */
+    background: radial-gradient(white, #909090); /* Standard syntax (must be last) */
 }
 
 .time {
@@ -7,18 +17,9 @@
     font-size: 5vmin;
     font-family: "Open Sans Condensed",sans-serif;
     text-shadow: 0px 0px 5vmin #ffffff;
-    color: black;
-}
-
-.weekend {
-    color: white;
-    text-align: center;
-    font-size: 30vmin;
-    font-family: "Comfortaa",serif;
-    text-shadow: 0px 0px 1vmin #909090;
-    border: dotted rgba(144,144,144,0.75);
-    border-width: 3vmin 0 3vmin 0;
-    padding-top: 4vmin;
+    color: #909090;
+    margin:0;
+    padding-top:20px;
 }
 
 .countdown {
@@ -28,22 +29,25 @@
     font-family: "Open Sans Condensed",serif;
 }
 
-html{
-    background: white; /* For browsers that do not support gradients */    
-    background: -webkit-radial-gradient(white, #909090); /* Safari 5.1 to 6.0 */
-    background: -o-radial-gradient(white, #909090); /* For Opera 11.6 to 12.0 */
-    background: -moz-radial-gradient(white, #909090); /* For Firefox 3.6 to 15 */
-    background: radial-gradient(white, #909090); /* Standard syntax (must be last) */
+.weekend {
+    color: white;
+    text-align: center;
+    font-size: 15vw;
+    font-family: "Comfortaa","Quicksand",serif;
+    text-shadow: 0px 0px 1vmin #909090;
+    border: dotted rgba(144,144,144,0.75);
+    border-width: 3vmin 0 3vmin 0;
+    padding-top: 4vmin;
 }
 
 .rainbow { 
     height: 100%;
-    width: 100%;
+    /* width: 100%;
     left:0;
     right: 0;
     top: 0;
-    bottom: 0;
-    position: absolute;
+    bottom: 0; */
+   /*  position: absolute; */
     -webkit-animation:rainbow 30s infinite;
     -ms-animation:rainbow 30s infinite;
     -o-animation:rainbow 30s infinite;
