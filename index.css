@@ -31,6 +31,9 @@ body{
     text-align: center;
     font-size: 12vmin;
     font-family: "Open Sans Condensed",serif;
+    padding-top: 25vh;
+    padding-bottom: 25vh;
+    margin: 0;
 }
 
 .weekend {
