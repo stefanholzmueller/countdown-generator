@@ -12,12 +12,16 @@ body{
     background: radial-gradient(white, #909090); /* Standard syntax (must be last) */
 }
 
+.rainbow .time {
+	color: #909090;
+}
+
 .time {
     text-align: center;
     font-size: 5vmin;
     font-family: "Open Sans Condensed",sans-serif;
     text-shadow: 0px 0px 5vmin #ffffff;
-    color: #909090;
+    color: black;
     margin:0;
     padding-top:20px;
 }
@@ -48,60 +52,22 @@ body{
     top: 0;
     bottom: 0; */
    /*  position: absolute; */
-    -webkit-animation:rainbow 30s infinite;
-    -ms-animation:rainbow 30s infinite;
-    -o-animation:rainbow 30s infinite;
-    animation:rainbow 30s infinite;
+    -webkit-animation:rainbow 30s linear infinite;
+    -ms-animation:rainbow 30s linear infinite;
+    -o-animation:rainbow 30s linear infinite;
+    animation:rainbow 30s linear infinite;
+
 }
-@-webkit-keyframes rainbow {
-    0% {background: #ff0000;}
-    10% {background: #ff8000;}
-    20% {background: #ffff00;}
-    30% {background: #80ff00;}
-    40% {background: #00ff00;}
-    50% {background: #00ff80;}
-    60% {background: #00ffff;}
-    70% {background: #0080ff;}
-    80% {background: #0000ff;}
-    90% {background: #8000ff;}
-    100% {background: #ff0080;}
-}
-@-ms-keyframes rainbow {
-    0% {background: #ff0000;}
-    10% {background: #ff8000;}
-    20% {background: #ffff00;}
-    30% {background: #80ff00;}
-    40% {background: #00ff00;}
-    50% {background: #00ff80;}
-    60% {background: #00ffff;}
-    70% {background: #0080ff;}
-    80% {background: #0000ff;}
-    90% {background: #8000ff;}
-    100% {background: #ff0080;}
-}
-@-o-keyframes rainbow {
-    0% {background: #ff0000;}
-    10% {background: #ff8000;}
-    20% {background: #ffff00;}
-    30% {background: #80ff00;}
-    40% {background: #00ff00;}
-    50% {background: #00ff80;}
-    60% {background: #00ffff;}
-    70% {background: #0080ff;}
-    80% {background: #0000ff;}
-    90% {background: #8000ff;}
-    100% {background: #ff0080;}
-}
+
 @keyframes rainbow {
-    0% {background: #ff0000;}
-    10% {background: #ff8000;}
-    20% {background: #ffff00;}
-    30% {background: #80ff00;}
-    40% {background: #00ff00;}
-    50% {background: #00ff80;}
-    60% {background: #00ffff;}
-    70% {background: #0080ff;}
-    80% {background: #0000ff;}
-    90% {background: #8000ff;}
-    100% {background: #ff0080;}
+    0% {background: #ff0000;} /*red*/
+    7% {background: #ff8000;} /*orange*/
+    21% {background: #ffff00;} /*yellow*/
+    36% {background: #00ff00;} /*green*/
+    50% {background: #00ffff;} /*cian*/
+    64% {background: #0000ff;} /* gutes blau*/
+    78% {background: #7F00FF;} /*#7F00FF violet*/
+    93% {background: #ff00ff;} /*magenta*/
+    100% {background: #ff0000;} /*red*/
+
 }
