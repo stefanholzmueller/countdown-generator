@@ -15,7 +15,8 @@ import Data.Formatter.Number (Formatter(..), format)
 import Data.Int (floor, toNumber)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
 import Data.Newtype (unwrap)
-import Data.Time.Duration (Days(..), Hours(..), Milliseconds, Minutes(..), Seconds, convertDuration)
+import Data.Time.Duration (class Duration, Days(..), Hours(..), Milliseconds(..), Minutes(..), Seconds(..), convertDuration)
+import Data.Tuple (Tuple(..))
 
 
 weekendStartDayOfWeek :: Int
@@ -52,7 +53,7 @@ durationTillWeekend = map testWeekend currentLocalTime
         startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0) >>> (setMillisecond $ fromMaybe bottom $ toEnum 0)) startDate
         timeFormatter = Formatter { comma: false, before: 2, after: 0, abbreviations: false, sign: false }
         millisFormatter = Formatter { comma: false, before: 3, after: 0, abbreviations: false, sign: false }
-        diffMillis :: Milliseconds
+        diffMillis :: ItemizedDuration
         diffMillis = diff startDatetime now
     in if startDatetime < now
        then Nothing
@@ -74,3 +75,23 @@ durationTillWeekend = map testWeekend currentLocalTime
                      ss = format timeFormatter s'
                  in (if d' > 0 then dd <> " days and " else "") <> hh <> ":" <> mm <> ":" <> ss
 
+msInSecond :: Number
+msInSecond = 1000.0
+msInMinute :: Number
+msInMinute = 60.0 * msInSecond
+msInHour :: Number
+msInHour = 60.0 * msInMinute
+msInDay :: Number
+msInDay = 24.0 * msInHour
+
+data ItemizedDuration = Itemized Days Hours Minutes Seconds Milliseconds
+
+instance durationItemized :: Duration ItemizedDuration where
+  fromDuration (Itemized (Days d) (Hours h) (Minutes m) (Seconds s) (Milliseconds ms)) =
+    Milliseconds (d * msInDay + h * msInHour + m * msInMinute + s * msInSecond + ms)
+  toDuration (Milliseconds ms') = Itemized (Days d) (Hours h) (Minutes m) (Seconds s) (Milliseconds ms)
+    where divMod x y = Tuple (div x y) (mod x y)
+          (Tuple s' ms) = divMod ms' 1000.0
+          (Tuple m' s)  = divMod s' 60.0
+          (Tuple h' m)  = divMod m' 60.0
+          (Tuple d  h)  = divMod h' 24.0
