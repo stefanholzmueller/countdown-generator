@@ -14,8 +14,9 @@ import Data.Formatter.DateTime (formatDateTime)
 import Data.Formatter.Number (Formatter(..), format)
 import Data.Int (floor, toNumber)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing)
-import Data.Time.Duration (class Duration, Days(..), Hours(..), Milliseconds(..), Minutes(..), Seconds(..))
+import Data.Time.Duration (class Duration, Days(..), Hours(..), Milliseconds(..), Minutes(..), Seconds(..), convertDuration)
 import Data.Tuple (Tuple(..))
+import Math (remainder)
 
 
 weekendStartDayOfWeek :: Int
@@ -78,7 +79,7 @@ instance durationItemized :: Duration ItemizedDuration where
   fromDuration (Itemized (Days d) (Hours h) (Minutes m) (Seconds s) (Milliseconds ms)) =
     Milliseconds (d * msInDay + h * msInHour + m * msInMinute + s * msInSecond + ms)
   toDuration (Milliseconds ms') = Itemized (Days d) (Hours h) (Minutes m) (Seconds s) (Milliseconds ms)
-    where divMod x y = Tuple (div x y) (mod x y)
+    where divMod x y = Tuple (div x y) (remainder x y)
           Tuple s' ms = divMod ms' 1000.0
           Tuple m' s  = divMod s' 60.0
           Tuple h' m  = divMod m' 60.0
