@@ -5,7 +5,7 @@ import Prelude
 import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Now (NOW, locale, now)
-import Data.DateTime (DateTime, adjust, date, diff, modifyTime, setHour, setMinute, setSecond, setMillisecond, weekday)
+import Data.DateTime (DateTime, Time(..), adjust, date, diff, modifyTime, weekday)
 import Data.DateTime.Instant (toDateTime)
 import Data.DateTime.Locale (Locale(..))
 import Data.Either (either)
@@ -22,8 +22,8 @@ import Partial.Unsafe (unsafePartial)
 weekendStartDayOfWeek :: Int
 weekendStartDayOfWeek = 5
 
-weekendStartHour :: Int
-weekendStartHour = 17
+weekendStartTime :: Time
+weekendStartTime = unsafePartial $ fromJust $ Time <$> toEnum 17 <*> toEnum 0 <*> toEnum 0 <*> toEnum 0
 
 offset :: forall eff. Eff (now :: NOW | eff) Minutes
 offset = map (\(Locale _ min) -> negate min) locale
@@ -50,11 +50,11 @@ durationTillWeekend = map testWeekend currentLocalTime
     let dayOfWeek = fromEnum $ weekday $ date now
         dayDiff   = Days $ toNumber (weekendStartDayOfWeek - dayOfWeek)
         startDate = fromMaybe bottom $ adjust dayDiff now
-        startDatetime = modifyTime ((setHour $ fromMaybe bottom $ toEnum weekendStartHour) >>> (setMinute $ fromMaybe bottom $ toEnum 0) >>> (setSecond $ fromMaybe bottom $ toEnum 0) >>> (setMillisecond $ fromMaybe bottom $ toEnum 0)) startDate
-     in if startDatetime < now
+        countdownEnd = modifyTime (const weekendStartTime) startDate
+     in if countdownEnd < now
         then Nothing
         else let difference :: ItemizedDuration
-                 difference = diff startDatetime now
+                 difference = diff countdownEnd now
                  (Itemized itemized) = difference
                  formatTime t = if t < 10 then "0" <> show t else show t
                  dd = case itemized.days of
