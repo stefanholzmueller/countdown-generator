@@ -76,11 +76,11 @@ data ItemizedDuration = Itemized { days :: Int
 
 instance durationItemized :: Duration ItemizedDuration where
   fromDuration (Itemized { days, hours, minutes, seconds, ms }) =
-    Milliseconds (toNumber (days * msInDay + hours * msInHour + minutes * msInMinute + seconds * msInSecond) + ms)
-    where msInSecond = 1000
-          msInMinute = 60 * msInSecond
-          msInHour = 60 * msInMinute
-          msInDay = 24 * msInHour
+    Milliseconds (toNumber days * msInDay + toNumber hours * msInHour + toNumber minutes * msInMinute + toNumber seconds * msInSecond + ms)
+    where msInSecond = 1000.0
+          msInMinute = 60.0 * msInSecond
+          msInHour = 60.0 * msInMinute
+          msInDay = 24.0 * msInHour
   toDuration (Milliseconds ms') = Itemized { days, hours, minutes, seconds, ms }
     where toInt n = unsafePartial $ fromJust $ fromNumber n
           divMod x y = Tuple (floor $ div x y) (remainder x y)
