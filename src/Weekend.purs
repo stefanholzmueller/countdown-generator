@@ -15,7 +15,7 @@ import Data.Int (fromNumber, toNumber)
 import Data.Maybe (Maybe(..), fromJust, fromMaybe, isNothing)
 import Data.Time.Duration (class Duration, Days(..), Milliseconds(..), Minutes)
 import Data.Tuple (Tuple(..))
-import Math (floor, remainder)
+import Math (remainder, trunc)
 import Partial.Unsafe (unsafePartial)
 
 
@@ -83,7 +83,7 @@ instance durationItemized :: Duration ItemizedDuration where
           msInDay = 24.0 * msInHour
   toDuration (Milliseconds ms') = Itemized { days, hours, minutes, seconds, ms }
     where toInt n = unsafePartial $ fromJust $ fromNumber n
-          divMod x y = Tuple (floor $ div x y) (remainder x y)
+          divMod x y = Tuple (trunc $ div x y) (remainder x y)
           Tuple s' ms = divMod ms' 1000.0
           Tuple m' s  = divMod s' 60.0
           Tuple h' m  = divMod m' 60.0
