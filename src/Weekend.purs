@@ -6,7 +6,7 @@ import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Now (NOW, locale, now)
 import Countdown as C
-import Data.DateTime (DateTime, Time(..), adjust, date, diff, weekday)
+import Data.DateTime (DateTime, Time(..), adjust, diff)
 import Data.DateTime.Instant (toDateTime)
 import Data.DateTime.Locale (Locale(..))
 import Data.Either (either)
@@ -31,9 +31,7 @@ currentLocalTime = map (fromMaybe bottom) effMaybeDateTime
 formattedCurrentTime :: forall eff. Eff (now :: NOW | eff) String
 formattedCurrentTime = map toString currentLocalTime
   where
-  toString dateTime = let workaroundForWeekday = show $ weekday $ date dateTime
-                          formattedDate = (formatDateTime "HH:mm" >>> either (const "ERROR") id) dateTime
-                       in workaroundForWeekday <> ", " <> formattedDate
+  toString = formatDateTime "dddd, HH:mm" >>> either (const "ERROR") id
 
 isWeekend :: forall eff. Eff (now :: NOW | eff) Boolean
 isWeekend = map isNothing durationTillWeekend
@@ -45,15 +43,15 @@ durationTillWeekend = map testWeekend currentLocalTime
     let countdownEnd = C.countdownEnd config now
      in if countdownEnd < now
         then Nothing
-        else let difference :: D.ItemizedDuration
-                 difference = diff countdownEnd now
-                 (D.Itemized itemized) = difference
-                 formatTime t = if t < 10 then "0" <> show t else show t
-                 dd = case itemized.days of
-                        0 -> ""
-                        1 -> "1 day and "
-                        d -> show d <> " days and "
-                 hh = formatTime itemized.hours
-                 mm = formatTime itemized.minutes
-                 ss = formatTime itemized.seconds
-              in Just $ dd <> hh <> ":" <> mm <> ":" <> ss
+        else Just let difference :: D.ItemizedDuration
+                      difference = diff countdownEnd now
+                      (D.Itemized itemized) = difference
+                      formatTime t = if t < 10 then "0" <> show t else show t
+                      dd = case itemized.days of
+                              0 -> ""
+                              1 -> "1 day and "
+                              d -> show d <> " days and "
+                      hh = formatTime itemized.hours
+                      mm = formatTime itemized.minutes
+                      ss = formatTime itemized.seconds
+                    in dd <> hh <> ":" <> mm <> ":" <> ss
