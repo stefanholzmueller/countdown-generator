@@ -18,8 +18,9 @@ import Partial.Unsafe (unsafePartial)
 
 
 config :: C.Config
-config = C.Weekly { dayOfWeek: 5
+config = C.Weekly { startDayOfWeek: 5 
                   , startTime: unsafePartial $ fromJust $ Time <$> toEnum 17 <*> toEnum 0 <*> toEnum 0 <*> toEnum 0
+                  , nowFormat: "[It's] dddd, HH:mm"
                   }
 
 currentLocalTime :: forall eff. Eff (now :: NOW | eff) DateTime
@@ -55,3 +56,5 @@ durationTillWeekend = map testWeekend currentLocalTime
                       mm = formatTime itemized.minutes
                       ss = formatTime itemized.seconds
                     in dd <> hh <> ":" <> mm <> ":" <> ss
+
+

@@ -10,11 +10,12 @@ import Data.Time.Duration (Days(..))
 import Partial.Unsafe (unsafePartial)
 
 
-data Config = Weekly { dayOfWeek :: Int, startTime :: Time }
+data Config = Weekly { startDayOfWeek :: Int, startTime :: Time, nowFormat :: String }
+  --          | Instant { startDate :: Date, startTime :: Time }
 
 countdownEnd :: Config -> DateTime -> DateTime
 countdownEnd config now = case config of 
   (Weekly weekly) -> let dayOfWeek = fromEnum $ weekday $ date now
-                         dayDiff   = Days $ toNumber (weekly.dayOfWeek - dayOfWeek)
+                         dayDiff   = Days $ toNumber (weekly.startDayOfWeek - dayOfWeek)
                          startDate = unsafePartial $ fromJust $ adjust dayDiff now
                       in modifyTime (const weekly.startTime) startDate
