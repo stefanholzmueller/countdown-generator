@@ -4,9 +4,9 @@ import Prelude
 
 import Data.Time.Duration (Milliseconds(..), convertDuration)
 import Data.Ord (abs)
+import Duration (ItemizedDuration(..))
 import Test.StrongCheck (class Arbitrary, Result, SC, assertEq, quickCheck, (<?>))
 import Test.StrongCheck.Gen (choose)
-import Weekend (ItemizedDuration(..))
 
 
 durationTests :: forall eff. SC eff Unit
