@@ -4,6 +4,10 @@ import Prelude
 
 import Control.Monad.Aff (Aff, delay)
 import Control.Monad.Eff.Now (NOW)
+import Countdown as C
+import Data.DateTime (DateTime)
+import Data.Either (either)
+import Data.Formatter.DateTime (formatDateTime)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Time.Duration (Milliseconds(..))
 import Halogen as H
@@ -13,7 +17,7 @@ import Weekend as W
 
 data Query a = Tick a
 
-type State = { isWeekend :: Boolean, currentTime :: String, duration :: Maybe String }
+type State = { eventReached :: Boolean, currentTime :: String, duration :: Maybe String }
 
 component :: forall eff. H.Component HH.HTML Query Unit Void (Aff (now :: NOW | eff))
 component =
@@ -26,11 +30,11 @@ component =
   where
 
   initialState :: State
-  initialState = { isWeekend: false, currentTime: "", duration: Nothing }
+  initialState = { eventReached: false, currentTime: "", duration: Nothing }
 
   render :: State -> H.ComponentHTML Query
   render state =
-    if state.isWeekend then
+    if state.eventReached then
         HH.div [ HP.class_ $ H.ClassName "rainbow" ]
             [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
                 [ HH.text ("It's " <> state.currentTime) ]
@@ -52,8 +56,13 @@ component =
   eval = case _ of
     Tick next -> do
       H.liftAff $ delay (Milliseconds 100.0)
-      currentTime <- H.liftEff W.formattedCurrentTime
-      isWeekend <- H.liftEff W.isWeekend
-      duration <- H.liftEff W.durationTillWeekend
-      H.put { isWeekend, currentTime, duration }
+      currentLocalTime <- H.liftEff C.currentLocalTime
+      let currentTime = formatCurrentTime currentLocalTime
+      let eventReached = C.isEventReached C.config currentLocalTime
+      let duration = W.durationTillWeekend currentLocalTime
+      H.put { eventReached, currentTime, duration }
       eval (Tick next)
+
+
+formatCurrentTime :: DateTime -> String
+formatCurrentTime = formatDateTime "dddd, HH:mm" >>> either ("ERROR: " <> _) id
