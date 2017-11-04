@@ -2,6 +2,7 @@ module Component where
 
 import Prelude
 
+import Config (config)
 import Control.Monad.Aff (Aff, delay)
 import Control.Monad.Eff.Now (NOW)
 import Countdown as C
@@ -58,7 +59,7 @@ component =
       H.liftAff $ delay (Milliseconds 100.0)
       currentLocalTime <- H.liftEff C.currentLocalTime
       let currentTime = formatCurrentTime currentLocalTime
-      let eventReached = C.isEventReached C.config currentLocalTime
+      let eventReached = C.isEventReached config currentLocalTime
       let duration = W.durationTillWeekend currentLocalTime
       H.put { eventReached, currentTime, duration }
       eval (Tick next)

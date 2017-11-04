@@ -3,12 +3,34 @@ module Duration where
 import Prelude
 
 import Data.Int (fromNumber, toNumber)
+import Data.List (List)
 import Data.Maybe (fromJust)
 import Data.Time.Duration (class Duration, Milliseconds(..))
 import Data.Tuple (Tuple(..))
 import Math (remainder, trunc)
 import Partial.Unsafe (unsafePartial)
 
+
+formatDuration :: forall d. Duration d => List FormatterCommand -> d -> String
+formatDuration format duration = "TODO"
+
+type MultiUnitDuration = { days :: Int
+                         , hours :: Int
+                         , minutes :: Int
+                         , seconds :: Int
+                         , ms :: Number
+                         }
+
+data FormatterElement = Days
+                      | Hours
+                      | Minutes
+                      | Seconds
+                      | MillisecondsXXX
+data FormatterCommand = Simple FormatterElement
+                      | Pluralized2 FormatterElement (Number -> String)
+                      | PadTwoDigits FormatterElement
+                      | PadThreeDigits FormatterElement
+                      | Literal String
 
 data ItemizedDuration = Itemized { days :: Int
                                  , hours :: Int
@@ -35,11 +57,3 @@ instance durationItemized :: Duration ItemizedDuration where
           hours   = toInt h
           minutes = toInt m
           seconds = toInt s
-
-
-
-
-
-
-
-
