@@ -2,37 +2,41 @@ module Test.Duration where
 
 import Prelude
 
-import Data.Time.Duration (Milliseconds(..), convertDuration)
+import Data.Int (toNumber)
 import Data.Ord (abs)
-import Duration (ItemizedDuration(..))
+import Data.Time.Duration (Milliseconds(..))
+import Duration (MultiUnitDuration, toMultiUnitDuration)
 import Test.StrongCheck (class Arbitrary, Result, SC, assertEq, quickCheck, (<?>))
 import Test.StrongCheck.Gen (choose)
 
 
 durationTests :: forall eff. SC eff Unit
 durationTests = do
-  quickCheck convertToItemizedDurationAndBack
-  quickCheck itemizedDurationHasCorrectRanges
+  quickCheck convertToMultiUnitDurationAndBack
+  quickCheck multiUnitDurationHasCorrectRanges
 
-convertToItemizedDurationAndBack :: RandomMilliseconds -> Result
-convertToItemizedDurationAndBack (RandomMilliseconds milliseconds) =
+convertToMultiUnitDurationAndBack :: RandomMilliseconds -> Result
+convertToMultiUnitDurationAndBack (RandomMilliseconds milliseconds) =
   assertEq milliseconds returnedMilliseconds
   where
-  itemizedDuration :: ItemizedDuration
-  itemizedDuration = convertDuration milliseconds
+  mud :: MultiUnitDuration
+  mud = toMultiUnitDuration milliseconds
   returnedMilliseconds :: Milliseconds
-  returnedMilliseconds = convertDuration itemizedDuration
+  returnedMilliseconds = Milliseconds (toNumber mud.days * msInDay + toNumber mud.hours * msInHour + toNumber mud.minutes * msInMinute + toNumber mud.seconds * msInSecond + mud.ms)
+  msInSecond = 1000.0
+  msInMinute = 60.0 * msInSecond
+  msInHour = 60.0 * msInMinute
+  msInDay = 24.0 * msInHour
 
-itemizedDurationHasCorrectRanges :: RandomMilliseconds -> Result
-itemizedDurationHasCorrectRanges (RandomMilliseconds milliseconds) =
-  (((abs itemized.ms) < 1000.0) <?> ("incorrect ms: " <> show itemized.ms)) <>
-  (((abs itemized.seconds) < 60) <?> ("incorrect seconds: " <> show itemized.seconds)) <>
-  (((abs itemized.minutes) < 60) <?> ("incorrect minutes: " <> show itemized.minutes)) <>
-  (((abs itemized.hours) < 24) <?> ("incorrect hours: " <> show itemized.hours))
+multiUnitDurationHasCorrectRanges :: RandomMilliseconds -> Result
+multiUnitDurationHasCorrectRanges (RandomMilliseconds milliseconds) =
+  (((abs mud.ms) < 1000.0) <?> ("incorrect ms: " <> show mud.ms)) <>
+  (((abs mud.seconds) < 60) <?> ("incorrect seconds: " <> show mud.seconds)) <>
+  (((abs mud.minutes) < 60) <?> ("incorrect minutes: " <> show mud.minutes)) <>
+  (((abs mud.hours) < 24) <?> ("incorrect hours: " <> show mud.hours))
   where
-  itemizedDuration :: ItemizedDuration
-  itemizedDuration = convertDuration milliseconds
-  (Itemized itemized) = itemizedDuration
+  mud :: MultiUnitDuration
+  mud = toMultiUnitDuration milliseconds
 
 newtype RandomMilliseconds = RandomMilliseconds Milliseconds
 instance arbMilliseconds :: Arbitrary RandomMilliseconds
