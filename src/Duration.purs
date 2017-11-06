@@ -2,7 +2,7 @@ module Duration where
   
 import Prelude
 
-import Data.Int (fromNumber, toNumber)
+import Data.Int (fromNumber)
 import Data.List (List)
 import Data.Maybe (fromJust)
 import Data.Time.Duration (class Duration, Milliseconds(..), convertDuration)
