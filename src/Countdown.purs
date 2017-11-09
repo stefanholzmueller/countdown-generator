@@ -17,7 +17,7 @@ import Duration as D
 import Partial.Unsafe (unsafePartial)
 
 
-type CountdownResult = Maybe D.MultiUnitDuration
+type CountdownResult = Maybe D.DurationComponents
 
 countdownEnd :: C.Config -> DateTime -> DateTime
 countdownEnd config now = case config of 
@@ -33,7 +33,7 @@ countdown config now = if end < now then Nothing else Just multiUnitDuration
   end = countdownEnd config now
   difference :: Milliseconds
   difference = diff end now
-  multiUnitDuration = D.toMultiUnitDuration difference
+  multiUnitDuration = D.durationComponents difference
 
 currentLocalTime :: forall eff. Eff (now :: NOW | eff) DateTime
 currentLocalTime = map (fromMaybe bottom) effMaybeDateTime

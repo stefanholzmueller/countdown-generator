@@ -5,38 +5,38 @@ import Prelude
 import Data.Int (toNumber)
 import Data.Ord (abs)
 import Data.Time.Duration (Milliseconds(..))
-import Duration (MultiUnitDuration, toMultiUnitDuration)
+import Duration (DurationComponents, durationComponents)
 import Test.StrongCheck (class Arbitrary, Result, SC, assertEq, quickCheck, (<?>))
 import Test.StrongCheck.Gen (choose)
 
 
 durationTests :: forall eff. SC eff Unit
 durationTests = do
-  quickCheck convertToMultiUnitDurationAndBack
-  quickCheck multiUnitDurationHasCorrectRanges
+  quickCheck convertToDurationComponentsAndBack
+  quickCheck durationComponentsHaveCorrectRanges
 
-convertToMultiUnitDurationAndBack :: RandomMilliseconds -> Result
-convertToMultiUnitDurationAndBack (RandomMilliseconds milliseconds) =
+convertToDurationComponentsAndBack :: RandomMilliseconds -> Result
+convertToDurationComponentsAndBack (RandomMilliseconds milliseconds) =
   assertEq milliseconds returnedMilliseconds
   where
-  mud :: MultiUnitDuration
-  mud = toMultiUnitDuration milliseconds
+  components :: DurationComponents
+  components = durationComponents milliseconds
   returnedMilliseconds :: Milliseconds
-  returnedMilliseconds = Milliseconds (toNumber mud.days * msInDay + toNumber mud.hours * msInHour + toNumber mud.minutes * msInMinute + toNumber mud.seconds * msInSecond + mud.ms)
+  returnedMilliseconds = Milliseconds (toNumber components.days * msInDay + toNumber components.hours * msInHour + toNumber components.minutes * msInMinute + toNumber components.seconds * msInSecond + components.ms)
   msInSecond = 1000.0
   msInMinute = 60.0 * msInSecond
   msInHour = 60.0 * msInMinute
   msInDay = 24.0 * msInHour
 
-multiUnitDurationHasCorrectRanges :: RandomMilliseconds -> Result
-multiUnitDurationHasCorrectRanges (RandomMilliseconds milliseconds) =
-  (((abs mud.ms) < 1000.0) <?> ("incorrect ms: " <> show mud.ms)) <>
-  (((abs mud.seconds) < 60) <?> ("incorrect seconds: " <> show mud.seconds)) <>
-  (((abs mud.minutes) < 60) <?> ("incorrect minutes: " <> show mud.minutes)) <>
-  (((abs mud.hours) < 24) <?> ("incorrect hours: " <> show mud.hours))
+durationComponentsHaveCorrectRanges :: RandomMilliseconds -> Result
+durationComponentsHaveCorrectRanges (RandomMilliseconds milliseconds) =
+  (((abs components.ms) < 1000.0) <?> ("incorrect ms: " <> show components.ms)) <>
+  (((abs components.seconds) < 60) <?> ("incorrect seconds: " <> show components.seconds)) <>
+  (((abs components.minutes) < 60) <?> ("incorrect minutes: " <> show components.minutes)) <>
+  (((abs components.hours) < 24) <?> ("incorrect hours: " <> show components.hours))
   where
-  mud :: MultiUnitDuration
-  mud = toMultiUnitDuration milliseconds
+  components :: DurationComponents
+  components = durationComponents milliseconds
 
 newtype RandomMilliseconds = RandomMilliseconds Milliseconds
 instance arbMilliseconds :: Arbitrary RandomMilliseconds

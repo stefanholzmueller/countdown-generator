@@ -43,14 +43,14 @@ component =
             , HH.h1 [ HP.class_ $ H.ClassName "weekend" ]
                 [ HH.text "WEEKEND" ]
             ]
-    (Just multiUnitDuration) ->
+    (Just components) ->
         HH.div_
             [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
                 [ HH.text ("It's " <> state.currentTime) ]
             , HH.h1 [ HP.class_ $ H.ClassName "countdown" ]
                 [ HH.text "Weekend starts in"
                 , HH.br_
-                , HH.text $ formatMultiUnitDuration multiUnitDuration
+                , HH.text $ formatDuration components
                 ]
             ]
 
@@ -68,14 +68,14 @@ component =
 formatCurrentTime :: DateTime -> String
 formatCurrentTime = formatDateTime "dddd, HH:mm" >>> either ("ERROR: " <> _) id
 
-formatMultiUnitDuration :: D.MultiUnitDuration -> String
-formatMultiUnitDuration duration = dd <> hh <> ":" <> mm <> ":" <> ss
+formatDuration :: D.DurationComponents -> String
+formatDuration components = dd <> hh <> ":" <> mm <> ":" <> ss
   where
   formatTime t = if t < 10 then "0" <> show t else show t
-  dd = case duration.days of
+  dd = case components.days of
         0 -> ""
         1 -> "1 day and "
         d -> show d <> " days and "
-  hh = formatTime duration.hours
-  mm = formatTime duration.minutes
-  ss = formatTime duration.seconds
+  hh = formatTime components.hours
+  mm = formatTime components.minutes
+  ss = formatTime components.seconds

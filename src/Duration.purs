@@ -14,15 +14,15 @@ import Partial.Unsafe (unsafePartial)
 formatDuration :: forall d. Duration d => List FormatterCommand -> d -> String
 formatDuration format duration = "TODO"
 
-type MultiUnitDuration = { days :: Int
-                         , hours :: Int
-                         , minutes :: Int
-                         , seconds :: Int
-                         , ms :: Number
-                         }
+type DurationComponents = { days :: Int
+                          , hours :: Int
+                          , minutes :: Int
+                          , seconds :: Int
+                          , ms :: Number
+                          }
 
-toMultiUnitDuration :: forall d. Duration d => d -> MultiUnitDuration
-toMultiUnitDuration duration = { days, hours, minutes, seconds, ms }
+durationComponents :: forall d. Duration d => d -> DurationComponents
+durationComponents duration = { days, hours, minutes, seconds, ms }
   where
   milliseconds :: Milliseconds
   milliseconds = convertDuration duration
