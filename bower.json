@@ -12,7 +12,9 @@
     "purescript-console": "^3.0.0",
     "purescript-halogen": "^2.0.0",
     "purescript-now": "^3.0.0",
-    "purescript-formatters": "^3.0.0"
+    "purescript-formatters": "^3.0.0",
+    "purescript-dom": "^4.15.0",
+    "purescript-uri": "^4.2.4"
   },
   "devDependencies": {
     "purescript-debug": "^3.0.0",

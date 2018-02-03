@@ -9,7 +9,7 @@ import Data.Time (Time(..))
 import Partial.Unsafe (unsafePartial)
 
 
-data Config = Weekly { startDayOfWeek :: Int, startTime :: Time, nowFormat :: String }
+data Config = Weekly { startDayOfWeek :: Int, startTime :: Time }
             | Fixed { startDate :: Date, startTime :: Time }
 
 config :: Config
