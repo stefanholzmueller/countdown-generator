@@ -31,4 +31,3 @@ main = HA.runHalogenAff do
   loadConfig location = case runParser parser location of
     (Left parseError) -> Left $ show parseError
     (Right uri) -> C.deserialize uri
-  
