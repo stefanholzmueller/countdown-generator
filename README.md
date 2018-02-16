@@ -1,5 +1,10 @@
-Title says it all: highly informative site for everyone who likes weekends
+# Countdown Generator
 
-Deployed at: https://stefanholzmueller.github.io/weekend-countdown/
+Looking forward to something? Make a countdown for it!
 
-P.S.: weekend is defined to start on Friday, 17:00
+Deployed at: https://stefanholzmueller.github.io/countdown-generator/
+
+### Examples
+
+coming soon
+

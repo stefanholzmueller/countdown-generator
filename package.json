@@ -6,7 +6,7 @@
     "b": "pulp browserify --to dist/app.js",
     "browserify": "pulp browserify --optimise --transform uglifyify --main Frontend --to dist/app.js",
     "watch": "pulp -w build --to dist/app.js",
-    "watch-fast": "webpack --entry ./entry.js --output-filename dist/app.js --progress --watch",
+    "w": "webpack --entry ./entry.js --output-filename dist/app.js --progress --watch",
     "webpack": "webpack --entry ./entry.js --output-filename dist/app.js -p --progress"
   },
   "devDependencies": {
