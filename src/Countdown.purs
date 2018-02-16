@@ -19,7 +19,7 @@ import Partial.Unsafe (unsafePartial)
 
 type CountdownResult = Maybe D.DurationComponents
 
-countdownEnd :: C.Config -> DateTime -> DateTime
+countdownEnd :: C.StartConfig -> DateTime -> DateTime
 countdownEnd config now = case config of 
   (C.Weekly weekly) -> let dayOfWeek = fromEnum $ weekday $ date now
                            dayDiff   = Days $ toNumber (weekly.startDayOfWeek - dayOfWeek)
@@ -27,7 +27,7 @@ countdownEnd config now = case config of
                         in modifyTime (const weekly.startTime) startDate
   (C.Fixed fixed) -> DateTime fixed.startDate fixed.startTime
 
-countdown :: C.Config -> DateTime -> CountdownResult
+countdown :: C.StartConfig -> DateTime -> CountdownResult
 countdown config now = if end < now then Nothing else Just multiUnitDuration
   where 
   end = countdownEnd config now

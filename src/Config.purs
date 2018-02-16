@@ -3,33 +3,30 @@ module Config where
 import Prelude
 
 import Control.Alt ((<|>))
-import Data.Date (Date, Month(..), canonicalDate, day, month, year)
+import Data.Date (Date, canonicalDate, day, month, year)
 import Data.Either (Either(..), note)
 import Data.Enum (class BoundedEnum, fromEnum, toEnum)
 import Data.Int (fromString)
 import Data.List (List, find)
-import Data.Maybe (Maybe(..), fromJust)
+import Data.Maybe (Maybe(..))
 import Data.Time (Time(..), hour, minute, second)
 import Data.Tuple (Tuple, fst, snd)
 import Data.URI (Query(..), URI(..))
-import Partial.Unsafe (unsafePartial)
+import Global (encodeURIComponent)
 
 
-data Config = Weekly { startDayOfWeek :: Int, startTime :: Time }
-            | Fixed { startDate :: Date, startTime :: Time }
+data Config = Config { event :: String, prefix :: String, startConfig :: StartConfig }
+
+data StartConfig = Weekly { startDayOfWeek :: Int, startTime :: Time }
+                 | Fixed { startDate :: Date, startTime :: Time }
 
 instance showConfig :: Show Config -- for debugging
   where show config = serialize config
 
-config :: Config
-config = Fixed { startDate: unsafePartial $ fromJust $ canonicalDate <$> toEnum 2017 <*> (Just November) <*> toEnum 17
-               , startTime: unsafePartial $ fromJust $ Time <$> toEnum 17 <*> toEnum 0 <*> toEnum 0 <*> toEnum 0
-               }
-
 serialize :: Config -> String
-serialize config = case config of
-  (Weekly { startDayOfWeek, startTime }) -> "?type=weekly&startDayOfWeek=" <> show startDayOfWeek <> timeParams startTime
-  (Fixed { startDate, startTime })       -> "?type=fixed" <> dateParams startDate <> timeParams startTime
+serialize (Config { event, prefix, startConfig}) = "?event=" <> encodeURIComponent event <> "&prefix=" <> encodeURIComponent prefix <> case startConfig of
+  (Weekly { startDayOfWeek, startTime }) -> "&type=weekly&startDayOfWeek=" <> show startDayOfWeek <> timeParams startTime
+  (Fixed { startDate, startTime })       -> "&type=fixed" <> dateParams startDate <> timeParams startTime
   where
   dateParams :: Date -> String
   dateParams d = "&year=" <> (show <<< fromEnum <<< year) d <> "&month=" <> (show <<< fromEnum <<< month) d <> "&day=" <> (show <<< fromEnum <<< day) d
@@ -38,16 +35,21 @@ serialize config = case config of
 
 deserialize :: URI -> Either String Config
 deserialize uri = case uri of
-  (URI _ _ (Just (Query params)) _) -> buildWeeklyConfig params <|> buildFixedConfig params
+  (URI _ _ (Just (Query params)) _) -> buildConfig params
   _                                 -> Left "URI has no query parameters"
   where
-  buildWeeklyConfig :: List QueryParam -> Either String Config
+  buildConfig :: List QueryParam -> Either String Config
+  buildConfig ps = do event <- strParam ps "event"
+                      prefix <- strParam ps "prefix"
+                      startConfig <- buildWeeklyConfig ps <|> buildFixedConfig ps
+                      pure $ Config { event, prefix, startConfig }
+  buildWeeklyConfig :: List QueryParam -> Either String StartConfig
   buildWeeklyConfig ps = if strParam ps "type" == Right "weekly"
                          then do startDayOfWeek <- intParam ps "startDayOfWeek"
                                  startTime <- timeParam ps
                                  pure $ Weekly { startDayOfWeek, startTime }
                          else Left ("invalid parameters: " <> show ps)
-  buildFixedConfig :: List QueryParam -> Either String Config
+  buildFixedConfig :: List QueryParam -> Either String StartConfig
   buildFixedConfig ps = if strParam ps "type" == Right "fixed"
                         then do startDate <- dateParam ps
                                 startTime <- timeParam ps
@@ -71,3 +73,4 @@ deserialize uri = case uri of
   strParam ps name = note ("param '" <> name <> "' not found. params:" <> show ps) $ (find (\t -> fst t == name) ps) >>= snd
 
 type QueryParam = (Tuple String (Maybe String))
+
