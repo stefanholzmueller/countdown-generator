@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import Component (Query(..), component)
+import Component (Query(..), mainComponent)
 import Config as C
 import Control.Monad.Aff.Console (CONSOLE, log)
 import Control.Monad.Eff (Eff)
@@ -21,10 +21,10 @@ import Text.Parsing.StringParser (runParser)
 main :: forall eff. Eff (HA.HalogenEffects (console :: CONSOLE, now :: NOW | eff)) Unit
 main = HA.runHalogenAff do
   h <- H.liftEff $ window >>= location >>= href
-  let config = loadConfig h
-  log $ show $ config
   body <- HA.awaitBody
-  io <- runUI component unit body
+  let configOrError = loadConfig h
+  log ("loaded config: " <> show configOrError)
+  io <- runUI (mainComponent configOrError) unit body
   H.liftAff $ io.query $ H.action Tick
   where
   loadConfig :: String -> Either String C.Config

@@ -2,12 +2,12 @@ module Component where
 
 import Prelude
 
-import Config (config)
+import Config (Config)
 import Control.Monad.Aff (Aff, delay)
 import Control.Monad.Eff.Now (NOW)
 import Countdown as C
 import Data.DateTime (DateTime)
-import Data.Either (either)
+import Data.Either (Either, either)
 import Data.Formatter.DateTime (formatDateTime)
 import Data.Maybe (Maybe(..))
 import Data.Time.Duration (Milliseconds(..))
@@ -21,8 +21,8 @@ data Query a = Tick a
 
 type State = { currentTime :: String, countdownResult :: C.CountdownResult }
 
-component :: forall eff. H.Component HH.HTML Query Unit Void (Aff (now :: NOW | eff))
-component =
+mainComponent :: forall eff. Either String Config -> H.Component HH.HTML Query Unit Void (Aff (now :: NOW | eff))
+mainComponent configOrError =
   H.component
     { initialState: const initialState
     , render
@@ -56,13 +56,15 @@ component =
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (now :: NOW | eff))
   eval = case _ of
-    Tick next -> do
-      H.liftAff $ delay (Milliseconds 100.0)
-      currentLocalTime <- H.liftEff C.currentLocalTime
-      let currentTime = formatCurrentTime currentLocalTime
-      let countdownResult = C.countdown config currentLocalTime
-      H.put { currentTime, countdownResult }
-      eval (Tick next)
+    Tick next -> either (const (pure next)) (runWithConfig next) configOrError
+      where
+      runWithConfig next config = do
+        H.liftAff $ delay (Milliseconds 100.0)
+        currentLocalTime <- H.liftEff C.currentLocalTime
+        let currentTime = formatCurrentTime currentLocalTime
+        let countdownResult = C.countdown config currentLocalTime
+        H.put { currentTime, countdownResult }
+        eval (Tick next)
 
 
 formatCurrentTime :: DateTime -> String
