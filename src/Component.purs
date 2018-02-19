@@ -44,7 +44,7 @@ mainComponent configOrError =
             HH.div [ HP.class_ $ H.ClassName "rainbow" ]
                 [ HH.p [ HP.class_ $ H.ClassName "time" ]
                     [ HH.text ("It's " <> state.currentTime) ]
-                , HH.h1 [ HP.class_ $ H.ClassName "weekend" ]
+                , HH.div [ HP.class_ $ H.ClassName "event" ]
                     [ HH.text event ]
                 ]
         (Counting components) ->
