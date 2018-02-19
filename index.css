@@ -18,10 +18,10 @@ body {
     font-size: 5vmin;
     font-weight: bold;
     font-family: "Open Sans Condensed",sans-serif;
-    text-shadow: 0px 0px 5vmin #ffffff;
+    text-shadow: 0 0 5vmin #ffffff;
     color: black;
     margin: 0;
-    padding-top: 20px;
+    padding-top: 2vh;
 }
 
 .countdown {
@@ -41,7 +41,7 @@ body {
     font-size: 15vw;
     font-weight: bold;
     font-family: "Comfortaa","Quicksand",serif;
-    text-shadow: 0px 0px 1vmin #909090;
+    text-shadow: 0 0 1vmin #909090;
     border: dotted rgba(144,144,144,0.75);
     border-width: 3vmin 0 3vmin 0;
     padding-top: 4vmin;
