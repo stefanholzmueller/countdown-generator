@@ -42,19 +42,18 @@ mainComponent configOrError =
             HH.div_ []
         Reached ->
             HH.div [ HP.class_ $ H.ClassName "rainbow" ]
-                [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
+                [ HH.p [ HP.class_ $ H.ClassName "time" ]
                     [ HH.text ("It's " <> state.currentTime) ]
                 , HH.h1 [ HP.class_ $ H.ClassName "weekend" ]
                     [ HH.text event ]
                 ]
         (Counting components) ->
             HH.div_
-                [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
+                [ HH.p [ HP.class_ $ H.ClassName "time" ]
                     [ HH.text ("It's " <> state.currentTime) ]
-                , HH.h1 [ HP.class_ $ H.ClassName "countdown" ]
-                    [ HH.text prefix
-                    , HH.br_
-                    , HH.text $ formatDuration components
+                , HH.p [ HP.class_ $ H.ClassName "countdown" ]
+                    [ HH.div_ [ HH.text prefix ]
+                    , HH.div_ [ HH.text $ formatDuration components ]
                     ]
                 ]
 

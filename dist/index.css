@@ -1,8 +1,8 @@
-html{
+html {
 	height: 100%;
 }
 
-body{
+body {
     height: 100%;
     margin: 0;
     background: white; /* For browsers that do not support gradients */
@@ -16,6 +16,7 @@ body{
 .time {
     text-align: center;
     font-size: 5vmin;
+    font-weight: bold;
     font-family: "Open Sans Condensed",sans-serif;
     text-shadow: 0px 0px 5vmin #ffffff;
     color: black;
@@ -27,6 +28,7 @@ body{
     color: black;
     text-align: center;
     font-size: 12vmin;
+    font-weight: bold;
     font-family: "Open Sans Condensed",serif;
     padding-top: 25vh;
     padding-bottom: 25vh;
@@ -37,6 +39,7 @@ body{
     color: white;
     text-align: center;
     font-size: 15vw;
+    font-weight: bold;
     font-family: "Comfortaa","Quicksand",serif;
     text-shadow: 0px 0px 1vmin #909090;
     border: dotted rgba(144,144,144,0.75);
