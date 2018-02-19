@@ -11,13 +11,15 @@ import Data.DateTime.Instant (toDateTime)
 import Data.DateTime.Locale (Locale(..))
 import Data.Enum (fromEnum)
 import Data.Int (toNumber)
-import Data.Maybe (Maybe(..), fromJust, fromMaybe)
+import Data.Maybe (fromJust, fromMaybe)
 import Data.Time.Duration (Days(..), Milliseconds)
 import Duration as D
 import Partial.Unsafe (unsafePartial)
 
 
-type CountdownResult = Maybe D.DurationComponents
+data CountdownTimer = Undefined
+                    | Counting D.DurationComponents
+                    | Reached
 
 countdownEnd :: C.StartConfig -> DateTime -> DateTime
 countdownEnd config now = case config of 
@@ -27,8 +29,8 @@ countdownEnd config now = case config of
                         in modifyTime (const weekly.startTime) startDate
   (C.Fixed fixed) -> DateTime fixed.startDate fixed.startTime
 
-countdown :: C.StartConfig -> DateTime -> CountdownResult
-countdown config now = if end < now then Nothing else Just multiUnitDuration
+countdown :: C.StartConfig -> DateTime -> CountdownTimer
+countdown config now = if end < now then Reached else Counting multiUnitDuration
   where 
   end = countdownEnd config now
   difference :: Milliseconds

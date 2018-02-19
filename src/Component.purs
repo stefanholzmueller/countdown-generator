@@ -5,7 +5,7 @@ import Prelude
 import Config (Config(..), StartConfig(..))
 import Control.Monad.Aff (Aff, delay)
 import Control.Monad.Eff.Now (NOW)
-import Countdown as C
+import Countdown (CountdownTimer(..), countdown, currentLocalTime)
 import Data.DateTime (DateTime)
 import Data.Either (Either(..), either)
 import Data.Formatter.DateTime (formatDateTime)
@@ -19,7 +19,7 @@ import Halogen.HTML.Properties as HP
 
 data Query a = Tick a
 
-type State = { configOrError :: Either String Config, currentTime :: String, countdownResult :: C.CountdownResult }
+type State = { configOrError :: Either String Config, currentTime :: String, countdownResult :: CountdownTimer }
 
 mainComponent :: forall eff. Either String Config -> H.Component HH.HTML Query Unit Void (Aff (now :: NOW | eff))
 mainComponent configOrError =
@@ -32,20 +32,22 @@ mainComponent configOrError =
   where
 
   initialState :: State
-  initialState = { configOrError, currentTime: "loading...", countdownResult: Nothing }
+  initialState = { configOrError, currentTime: "loading...", countdownResult: Undefined }
 
   render :: State -> H.ComponentHTML Query
   render state = case state.configOrError of 
     (Left error) -> HH.p_ [ HH.text ("ERROR: " <> error) ]
     (Right (Config { event, prefix, startConfig })) -> case state.countdownResult of
-        Nothing ->
+        Undefined -> 
+            HH.div_ []
+        Reached ->
             HH.div [ HP.class_ $ H.ClassName "rainbow" ]
                 [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
                     [ HH.text ("It's " <> state.currentTime) ]
                 , HH.h1 [ HP.class_ $ H.ClassName "weekend" ]
                     [ HH.text event ]
                 ]
-        (Just components) ->
+        (Counting components) ->
             HH.div_
                 [ HH.h1 [ HP.class_ $ H.ClassName "time" ]
                     [ HH.text ("It's " <> state.currentTime) ]
@@ -62,11 +64,11 @@ mainComponent configOrError =
       where
       runWithConfig next (Config { event, prefix, startConfig }) = do
         H.liftAff $ delay (Milliseconds 100.0)
-        currentLocalTime <- H.liftEff C.currentLocalTime
+        currentLocalTime <- H.liftEff currentLocalTime
         let currentTime = case startConfig of
                             (Weekly _) -> formatCurrentTime "dddd, HH:mm" currentLocalTime
                             (Fixed _) -> formatCurrentTime "dddd, MMMM D" currentLocalTime
-        let countdownResult = C.countdown startConfig currentLocalTime
+        let countdownResult = countdown startConfig currentLocalTime
         H.put { currentTime, countdownResult, configOrError }
         eval (Tick next)
 
