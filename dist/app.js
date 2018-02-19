@@ -77,14 +77,14 @@ var mainComponent = function (configOrError) {
                 return Halogen_HTML_Elements.div_([  ]);
             };
             if (state.countdownResult instanceof Countdown.Reached) {
-                return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("rainbow") ])([ Halogen_HTML_Elements.h1([ Halogen_HTML_Properties.class_("time") ])([ Halogen_HTML_Core.text("It's " + state.currentTime) ]), Halogen_HTML_Elements.h1([ Halogen_HTML_Properties.class_("weekend") ])([ Halogen_HTML_Core.text(state.configOrError.value0.value0.event) ]) ]);
+                return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("rainbow") ])([ Halogen_HTML_Elements.p([ Halogen_HTML_Properties.class_("time") ])([ Halogen_HTML_Core.text("It's " + state.currentTime) ]), Halogen_HTML_Elements.h1([ Halogen_HTML_Properties.class_("weekend") ])([ Halogen_HTML_Core.text(state.configOrError.value0.value0.event) ]) ]);
             };
             if (state.countdownResult instanceof Countdown.Counting) {
-                return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements.h1([ Halogen_HTML_Properties.class_("time") ])([ Halogen_HTML_Core.text("It's " + state.currentTime) ]), Halogen_HTML_Elements.h1([ Halogen_HTML_Properties.class_("countdown") ])([ Halogen_HTML_Core.text(state.configOrError.value0.value0.prefix), Halogen_HTML_Elements.br_, Halogen_HTML_Core.text(formatDuration(state.countdownResult.value0)) ]) ]);
+                return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements.p([ Halogen_HTML_Properties.class_("time") ])([ Halogen_HTML_Core.text("It's " + state.currentTime) ]), Halogen_HTML_Elements.p([ Halogen_HTML_Properties.class_("countdown") ])([ Halogen_HTML_Elements.div_([ Halogen_HTML_Core.text(state.configOrError.value0.value0.prefix) ]), Halogen_HTML_Elements.div_([ Halogen_HTML_Core.text(formatDuration(state.countdownResult.value0)) ]) ]) ]);
             };
-            throw new Error("Failed pattern match at Component line 40, column 56 - line 59, column 18: " + [ state.countdownResult.constructor.name ]);
+            throw new Error("Failed pattern match at Component line 40, column 56 - line 58, column 18: " + [ state.countdownResult.constructor.name ]);
         };
-        throw new Error("Failed pattern match at Component line 38, column 18 - line 59, column 18: " + [ state.configOrError.constructor.name ]);
+        throw new Error("Failed pattern match at Component line 38, column 18 - line 58, column 18: " + [ state.configOrError.constructor.name ]);
     };
     var initialState = {
         configOrError: configOrError, 
@@ -103,7 +103,7 @@ var mainComponent = function (configOrError) {
                             if (v.value0.startConfig instanceof Config.Fixed) {
                                 return formatCurrentTime("dddd, MMMM D")(v1);
                             };
-                            throw new Error("Failed pattern match at Component line 68, column 27 - line 70, column 91: " + [ v.value0.startConfig.constructor.name ]);
+                            throw new Error("Failed pattern match at Component line 67, column 27 - line 69, column 91: " + [ v.value0.startConfig.constructor.name ]);
                         })();
                         var countdownResult = Countdown.countdown(v.value0.startConfig)(v1);
                         return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.put(Halogen_Query_HalogenM.monadStateHalogenM)({
